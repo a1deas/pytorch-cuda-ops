@@ -1,0 +1,14 @@
+services:
+  app:
+    image: gpu-ai-base
+    container_name: cuda-proj
+    deploy: {}
+    runtime: nvidia
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+    volumes:
+      - .:/workspace
+      - ~/.cache/pip:/root/.cache/pip
+    working_dir: /workspace
+    tty: true
+    stdin_open: true
