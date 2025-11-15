@@ -16,6 +16,9 @@ Each OP is implemented with:
     - CUDA -> C++ -> PyTorch dispatcher.
     - Serves as the base template for future ops.
     - Forward-only for now.
+2. ReLU
+    - Simple elementwise op.
+    - Autograd(backward)
 
 ## In Progress / Upcoming
 - Add autograd
