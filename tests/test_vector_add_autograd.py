@@ -5,7 +5,8 @@ from torch.utils.cpp_extension import load
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.join(BASE_DIR, "..")
-sys.path.insert(0, PROJECT_ROOT)
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 SRC_DIR = os.path.join(PROJECT_ROOT, "ops", "vector_add")
 

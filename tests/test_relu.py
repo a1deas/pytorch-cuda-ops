@@ -1,28 +1,32 @@
-import time, torch
+import os 
+import sys
+import time 
+import torch
 from torch.utils.cpp_extension import load
 
-relu_native = load(
-    name="relu",
-    sources=["ops/relu/relu_op.cpp", "ops/relu/relu_kernel.cu"],
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+PROJECT_ROOT = os.path.join(BASE_DIR, "..")
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
+
+SRC_DIR = os.path.join(PROJECT_ROOT, "ops", "relu")
+
+load(
+    name="pytorch_cuda_ops",
+    sources=[
+        os.path.join(SRC_DIR, "relu.cpp"),
+        os.path.join(SRC_DIR, "bindings.cpp"),
+        os.path.join(SRC_DIR, "relu_kernel.cu"),
+    ],
     extra_cflags=["-O3"],
     extra_cuda_cflags=["-O3"],
+    is_python_module = False,
     verbose=True
 )
 
-class ReLUFn(torch.autograd.Function):
-    @staticmethod
-    def forward(ctx, x):
-        ctx.save_for_backward(x)
-        return relu_native.forward(x)
+from custom.relu import relu
 
-    @staticmethod
-    def backward(ctx, grad_out):
-        (x,) = ctx.saved_tensors
-        return relu_native.backward(grad_out.contiguous(), x)
-
-def relu(x):
-    return ReLUFn.apply(x)
-
+# simple benchmark
 x = torch.randn(1_000_000, device="cuda", dtype=torch.float32, requires_grad=True)
 
 torch.cuda.synchronize(); 

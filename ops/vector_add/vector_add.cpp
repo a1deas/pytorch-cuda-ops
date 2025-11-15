@@ -7,7 +7,6 @@ void vector_add_cuda_launcher(
     int64_t n
 );
 
-
 at::Tensor vector_add_forward(const at::Tensor& a, const at::Tensor& b) {
     TORCH_CHECK(a.device().is_cuda(), "a must be a CUDA tensor");
     TORCH_CHECK(b.device().is_cuda(), "b must be a CUDA tensor");

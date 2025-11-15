@@ -1,34 +1,47 @@
-#include <torch/extension.h>
+#include <cuda_runtime.h>
+#include <cstdint>
+#include <c10/cuda/CUDAException.h>
 
-__global__ void relu_forward_kernel(const float* __restrict__ x, float* __restrict__ y, int n) {
+__global__ void relu_forward_kernel(
+    const float* __restrict__ x, 
+    float* __restrict__ y, 
+    int n
+) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n) y[i] = fmaxf(0.0f, x[i]);
 }
 
-__global__ void relu_backward_kernel(const float* __restrict__ gy, const float* __restrict__ x, float* __restrict__ gx, int n) {
+__global__ void relu_backward_kernel(
+    const float* __restrict__ gy, 
+    const float* __restrict__ x, 
+    float* __restrict__ gx, 
+    int n
+) {
     int i = blockIdx.x * blockDim.x + threadIdx.x;
     if (i < n) gx[i] = x[i] > 0 ? gy[i] : 0.0f;
 }
 
-static inline void cfg(int n, dim3& grid, dim3& block){
+void relu_forward_launcher(
+    const float* x, 
+    float* y, 
+    int64_t n
+) {
     int threads = 256;
-    block = dim3(threads);
-    grid  = dim3((n + threads - 1) / threads);
+    int64_t blocks = (n + threads - 1) / threads;
+
+    relu_forward_kernel<<<blocks, threads>>>(x, y, n);
+    C10_CUDA_KERNEL_LAUNCH_CHECK();
 }
 
-torch::Tensor relu_forward(torch::Tensor input){
-    auto x = input.contiguous();
-    auto y = torch::empty_like(x);
-    int n = x.numel(); dim3 grid, block; cfg(n, grid, block);
-    relu_forward_kernel<<<grid, block>>>(x.data_ptr<float>(), y.data_ptr<float>(), n);
-    return y;
-}
-
-torch::Tensor relu_backward(torch::Tensor grad_output, torch::Tensor input){
-    auto gy = grad_output.contiguous();
-    auto x  = input.contiguous();
-    auto gx = torch::empty_like(x);
-    int n = x.numel(); dim3 grid, block; cfg(n, grid, block);
-    relu_backward_kernel<<<grid, block>>>(gy.data_ptr<float>(), x.data_ptr<float>(), gx.data_ptr<float>(), n);
-    return gx;
+void relu_backward_launcher(
+    const float* gy, 
+    const float* x, 
+    float* gx,
+    int64_t n
+) {
+    int threads = 256;
+    int64_t blocks = (n + threads - 1) / threads;
+    
+    relu_backward_kernel<<<blocks, threads>>>(gy, x, gx, n);
+    C10_CUDA_KERNEL_LAUNCH_CHECK();
 }
