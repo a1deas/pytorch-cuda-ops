@@ -1,8 +1,7 @@
 services:
   app:
-    image: gpu-ai-base
-    container_name: cuda-proj
-    deploy: {}
+    image: pytorch-cuda-ops:dev
+    container_name: pytorch-cuda-ops
     runtime: nvidia
     environment:
       - NVIDIA_VISIBLE_DEVICES=all
