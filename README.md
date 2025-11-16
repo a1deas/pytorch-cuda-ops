@@ -24,8 +24,6 @@ Each operation is implemented as a PyTorch C++/CUDA extension with:
     - Autograd(forward + backward)
     - Benchmark coverage.
 
----
-
 ## Benchmarks and Tests Results
 - GPU: NVIDIA GeForce RTX 5060 Laptop 
 
@@ -56,8 +54,6 @@ n =  1000000 | custom ReLU:  0.0199 ms | torch.relu:  0.0123 ms
 (One of the following or both because why not): 
 - Tiled Matmul(shared memory, register tiling)
 - Fused Conv + ReLU(kernel fusion)
-
----
 
 ## Goals 
 - Build a high-quality portfolio of CUDA kernels
