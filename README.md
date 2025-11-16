@@ -23,7 +23,11 @@ Each operation is implemented as a PyTorch C++/CUDA extension with:
     - Simple elementwise op.
     - Autograd(forward + backward)
     - Benchmark coverage.
-
+3. Sigmoid 
+    - Simple elementwise op. 
+    - As ReLU classical for NN.
+    - (to be done) autograd.
+    - (to be done) benchmark coverage.
 ## Benchmarks and Tests Results
 - GPU: NVIDIA GeForce RTX 5060 Laptop 
 
