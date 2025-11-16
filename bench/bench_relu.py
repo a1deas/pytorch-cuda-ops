@@ -27,7 +27,7 @@ def bench_forward(function, x, iters = 100):
     torch.cuda.synchronize()
     start = time.time()
     for _ in range(iters):
-        y = function(x)
+        _ = function(x)
     torch.cuda.synchronize()
     return (time.time() - start) * 1e3 / iters
 
