@@ -7,7 +7,7 @@ Each operation is implemented as a PyTorch C++/CUDA extension with:
 - C++ launcher
 - ATen/Tensor integration
 - TORCH_LIBRARY registration
-- (later) autograd(Python + C++ backend)
+- (partly later) autograd(Python + C++ backend)
 - Unit Tests(forward + backward)
 
 ---
@@ -21,13 +21,17 @@ Each operation is implemented as a PyTorch C++/CUDA extension with:
     - Benchmark coverage.
 2. ReLU
     - Simple elementwise op.
+    - Classical for NN.
     - Autograd(forward + backward)
     - Benchmark coverage.
+    - Matches torch.relu.
 3. Sigmoid 
     - Simple elementwise op. 
-    - As ReLU classical for NN.
-    - (to be done) autograd.
-    - (to be done) benchmark coverage.
+    - Classical for NN.
+    - Autograd(forward + backward).
+    - Benchmark coverage.
+    - Mathes torch.sigmoid
+
 ## Benchmarks and Tests Results
 - GPU: NVIDIA GeForce RTX 5060 Laptop 
 
@@ -45,12 +49,18 @@ n =   100000 | custom ReLU:  0.0198 ms | torch.relu:  0.0248 ms
 n =  1000000 | custom ReLU:  0.0199 ms | torch.relu:  0.0123 ms
 ```
 
+3. Sigmoid
+```text 
+n =    10000 | custom sigmoid:  0.0635 ms | torch.sigmoid:  0.2528 ms
+n =   100000 | custom sigmoid:  0.0194 ms | torch.sigmoid:  0.0318 ms
+n =  1000000 | custom sigmoid:  0.0282 ms | torch.sigmoid:  0.0158 ms
+```
+
 > It is to be expected that a pure learning kernel without tuning will lose out to carefully crafted native functions, but the gap is not that significant.
 
 ---
 
 ## In Progress / Upcoming
-- Sigmoid(forward + backward)
 - Custom conv2d naive
 - im2col + col2im
 
