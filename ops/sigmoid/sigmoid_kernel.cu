@@ -39,7 +39,7 @@ void sigmoid_forward_launcher(
     C10_CUDA_KERNEL_LAUNCH_CHECK();
 }
 
-void sigmoid_backward_launcherl(
+void sigmoid_backward_launcher(
     const float* gy, 
     const float* x,
     float* gx,
